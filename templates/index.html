@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="text-center">Works log</h2>
+<h2 class="text-center mt-4">Works log</h2>
 {% if current_user %}
-<a href="/jobs" class="btn btn-secondary">Добавить работу</a>
+<div class="d-flex my-4">
+  <a href="/departments" class="btn btn-secondary">Департаменты</a>
+  <a href="/jobs" class="btn btn-secondary mx-2">Добавить работу</a>
+</div>
 {% endif %}
 {% for job in jobs %}
-
 {% set finish_status_style = "table-danger" %}
 {% if job.is_finished %} {% set finish_status_style = "table-primary" %} {% endif %}
 <h3>Action # {{ job.id }}</h3>
@@ -18,7 +20,6 @@
       <th scope="col">Duration</th>
       <th scope="col">List of collaborators</th>
       <th scope="col">is finished</th>
-      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
@@ -28,15 +29,15 @@
       <td>{{ job.work_size }} hours</td>
       <td>{{ job.collaborators }}</td>
       <td class="{{ finish_status_style }}">{% if job.is_finished %}Is finished{% else %}Is not finished{% endif %}</td>
-      <td>
-        {% if current_user.id == job.team_leader or current_user.id == 1 %}
-        <a href="/jobs/{{ job.id }}" class="btn btn-warning">Редактировать</a><br>
-        <a href="/jobs/{{ job.id }}/delete" class="btn btn-danger">Удалить</a><br>
-
-        {% endif %}
-      </td>
     </tr>
   </tbody>
 </table>
+{% if current_user.id == job.team_leader or current_user.id == 1 %}
+<div class="d-flex mb-4">
+  <a href="/jobs/{{ job.id }}" class="btn btn-warning mx-2">Редактировать</a>
+  <a href="/jobs/{{ job.id }}/delete" class="btn btn-danger">Удалить</a>
+</div>
+{% endif %}
 {% endfor %}
 {% endblock %}
+<div class="my-4"></div>

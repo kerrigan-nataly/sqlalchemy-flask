@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-center my-4">Список департаментов</h2>
+{% if current_user %}
+<div class="d-flex mb-4">
+    <a href="/" class="btn btn-secondary mx-2">Список работ</a>
+    <a href="/departments/add" class="btn btn-secondary">Добавить департамент</a>
+</div>
+{% endif %}
+    {% for department in departments %}
+        <h3>Департамент # {{ department.id }}</h3>
+        <table class="table">
+            <thead>
+                <tr class="table-secondary">
+                    <th scope="col">Название</th>
+                    <th scope="col">Ответственный</th>
+                    <th scope="col">Сотрудники</th>
+                    <th scope="col">Электронный ящик</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="purple">
+                    <td>{{ department.title }}</td>
+                    <td>{{ department.chief.name }} {{ department.chief.surname }}</td>
+                    <td>{{ department.members }}</td>
+                    <td>{{ department.email }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% if current_user.id == department.chief.id or current_user.id == 1 %}
+            <div class="d-flex">
+                <a href="/departments/{{ department.id }}" class="btn btn-warning mx-2">Редактировать</a>
+                <a href="/departments/{{ department.id }}/delete" class="btn btn-danger">Удалить</a>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
