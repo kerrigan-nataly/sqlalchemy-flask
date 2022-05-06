@@ -4,6 +4,7 @@ from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from forms.user import LoginForm, RegisterForm
+from forms.jobs import AddJobForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -22,9 +23,33 @@ def index():
     if current_user.is_authenticated:
         jobs = db_sess.query(Jobs).filter((Jobs.user == current_user))
     else:
-        jobs = db_sess.query(Jobs).all()
+        jobs = db_sess.query(Jobs)
 
     return render_template('index.html', jobs=jobs)
+
+
+@app.route('/jobs', methods=['GET', 'POST'])
+@login_required
+def add_job():
+    form = AddJobForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        job = Jobs(
+            job=form.job.data,
+            team_leader=form.team_leader.data,
+            work_size=form.work_size.data,
+            collaborators=form.collaborators.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+            is_finished=form.is_finished.data
+        )
+
+        db_sess = db_session.create_session()
+        db_sess.add(job)
+        db_sess.commit()
+        return redirect("/")
+
+    return render_template('/jobs/add.html', title='Добавление работы', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -50,7 +75,7 @@ def logout():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
