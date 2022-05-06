@@ -1,10 +1,10 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from forms.user import LoginForm, RegisterForm
-from forms.jobs import AddJobForm
+from forms.jobs import AddJobForm, EditJobForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -20,12 +20,10 @@ def load_user(user_id):
 @app.route('/')
 def index():
     db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        jobs = db_sess.query(Jobs).filter((Jobs.user == current_user))
-    else:
-        jobs = db_sess.query(Jobs)
 
-    return render_template('index.html', jobs=jobs)
+    jobs = db_sess.query(Jobs)
+
+    return render_template('index.html', jobs=jobs, current_user=current_user)
 
 
 @app.route('/jobs', methods=['GET', 'POST'])
@@ -50,6 +48,33 @@ def add_job():
         return redirect("/")
 
     return render_template('/jobs/add.html', title='Добавление работы', form=form)
+
+
+@app.route('/jobs/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(job_id):
+
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).get(job_id)
+    if job.team_leader != current_user.id or current_user.id == 1:
+        return "Доступ запрещен!"
+
+    form = EditJobForm(obj=job)
+
+    if form.validate_on_submit():
+        db_sess.query(Jobs).filter(Jobs.id == job_id).update({
+            Jobs.job: form.job.data,
+            Jobs.work_size: form.work_size.data,
+            Jobs.team_leader: form.team_leader.data,
+            Jobs.collaborators: form.collaborators.data,
+            Jobs.start_date: form.start_date.data,
+            Jobs.end_date: form.end_date.data,
+            Jobs.is_finished: form.is_finished.data
+        })
+        db_sess.commit()
+        return redirect("/")
+
+    return render_template('/jobs/edit.html', title='Редактирование работы', form=form, job_id=job_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])

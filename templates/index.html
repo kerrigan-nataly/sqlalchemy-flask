@@ -15,6 +15,7 @@
       <th scope="col">Duration</th>
       <th scope="col">List of collaborators</th>
       <th scope="col">is finished</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
@@ -24,6 +25,11 @@
       <td>{{ job.work_size }} hours</td>
       <td>{{ job.collaborators }}</td>
       <td class="{{ finish_status_style }}">{% if job.is_finished %}Is finished{% else %}Is not finished{% endif %}</td>
+      <td>
+        {% if current_user.id == job.team_leader %}
+        <a href="/jobs/{{ job.id }}" class="btn btn-danger">Редактировать</a>
+        {% endif %}
+      </td>
     </tr>
   </tbody>
 </table>
