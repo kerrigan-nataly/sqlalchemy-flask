@@ -1,16 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Список работ</h1>
-{% for item in jobs%}
-<div class="col-6 border rounded p-3">
-    <h2>{{item.job}}</h2>
-    <div>
-        {{item.work_size}}
-    </div>
-    <div>
-        Автор - {{item.user.name}}, Дата начала - {{item.start_date}}
-    </div>
-</div>
+<h2 class="text-center">Works log</h2>
+{% for job in jobs %}
+
+{% set finish_status_style = "table-danger" %}
+{% if job.is_finished %} {% set finish_status_style = "table-primary" %} {% endif %}
+<h3>Action # {{ job.id }}</h3>
+<table class="table">
+  <thead>
+    <tr class="table-secondary">
+      <th scope="col">Title of activity</th>
+      <th scope="col">Team leader</th>
+      <th scope="col">Duration</th>
+      <th scope="col">List of collaborators</th>
+      <th scope="col">is finished</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="purple">
+      <td>{{ job.job }}</td>
+      <td>{{ job.user.name }} {{ job.user.surname }}</td>
+      <td>{{ job.work_size }} hours</td>
+      <td>{{ job.collaborators }}</td>
+      <td class="{{ finish_status_style }}">{% if job.is_finished %}Is finished{% else %}Is not finished{% endif %}</td>
+    </tr>
+  </tbody>
+</table>
 {% endfor %}
 {% endblock %}
