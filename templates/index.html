@@ -19,6 +19,7 @@
       <th scope="col">Team leader</th>
       <th scope="col">Duration</th>
       <th scope="col">List of collaborators</th>
+      <th scope="col">Hazard category</th>
       <th scope="col">is finished</th>
     </tr>
   </thead>
@@ -28,6 +29,7 @@
       <td>{{ job.user.name }} {{ job.user.surname }}</td>
       <td>{{ job.work_size }} hours</td>
       <td>{{ job.collaborators }}</td>
+      <td>{% for cat in job.categories %} <div class="badge bg-secondary">{{ cat.name }}</div> {% endfor %}</td>
       <td class="{{ finish_status_style }}">{% if job.is_finished %}Is finished{% else %}Is not finished{% endif %}</td>
     </tr>
   </tbody>
@@ -40,4 +42,3 @@
 {% endif %}
 {% endfor %}
 {% endblock %}
-<div class="my-4"></div>

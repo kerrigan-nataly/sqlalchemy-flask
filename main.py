@@ -4,6 +4,7 @@ from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from data.departments import Department
+from data.category import Category
 from forms.user import LoginForm, RegisterForm
 from forms.jobs import AddJobForm, EditJobForm
 from forms.departments import AddDepartmentForm, EditDepartmentForm
@@ -263,6 +264,15 @@ def prep_db(session):
     astro4.address = "module_3"
     astro4.email = "house_gregory@mars.org"
 
+    cat1 = Category()
+    cat1.name = 'Hazard 1'
+
+    cat2 = Category()
+    cat2.name = 'Hazard 2'
+
+    cat3 = Category()
+    cat3.name = 'Hazard 3'
+
     session.add(cap)
     session.add(nav)
     session.add(astro1)
@@ -277,6 +287,7 @@ def prep_db(session):
     job.work_size = 15
     job.collaborators = '2, 3'
     job.is_finished = False
+    job.categories.append(cat3)
 
     exploration = Jobs()
     exploration.team_leader = astro1.id
@@ -284,6 +295,7 @@ def prep_db(session):
     exploration.work_size = 15
     exploration.collaborators = '4, 3'
     exploration.is_finished = True
+    exploration.categories.append(cat3)
 
     development = Jobs()
     development.team_leader = astro2.id
@@ -291,13 +303,15 @@ def prep_db(session):
     development.work_size = 5
     development.collaborators = '5'
     development.is_finished = False
+    development.categories.append(cat1)
 
-    development = Jobs()
-    development.team_leader = astro4.id
-    development.job = 'Warehouse organization'
-    development.work_size = 7
-    development.collaborators = '3, 4'
-    development.is_finished = False
+    warehouse = Jobs()
+    warehouse.team_leader = astro4.id
+    warehouse.job = 'Warehouse organization'
+    warehouse.work_size = 7
+    warehouse.collaborators = '3, 4'
+    warehouse.is_finished = False
+    warehouse.categories.append(cat2)
 
     air = Jobs()
     air.team_leader = astro4.id
@@ -305,6 +319,7 @@ def prep_db(session):
     air.work_size = 5
     air.collaborators = '3, 5, 4'
     air.is_finished = False
+    air.categories.append(cat3)
 
     maintenance = Jobs()
     maintenance.team_leader = astro4.id
@@ -312,8 +327,10 @@ def prep_db(session):
     maintenance.work_size = 10
     maintenance.collaborators = '1, 4'
     maintenance.is_finished = False
+    maintenance.categories.append(cat1)
 
     session.add(job)
+    session.add(warehouse)
     session.add(maintenance)
     session.add(air)
     session.add(exploration)
