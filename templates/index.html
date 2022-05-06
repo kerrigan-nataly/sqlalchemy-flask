@@ -2,6 +2,9 @@
 
 {% block content %}
 <h2 class="text-center">Works log</h2>
+{% if current_user %}
+<a href="/jobs" class="btn btn-secondary">Добавить работу</a>
+{% endif %}
 {% for job in jobs %}
 
 {% set finish_status_style = "table-danger" %}
@@ -26,8 +29,10 @@
       <td>{{ job.collaborators }}</td>
       <td class="{{ finish_status_style }}">{% if job.is_finished %}Is finished{% else %}Is not finished{% endif %}</td>
       <td>
-        {% if current_user.id == job.team_leader %}
-        <a href="/jobs/{{ job.id }}" class="btn btn-danger">Редактировать</a>
+        {% if current_user.id == job.team_leader or current_user.id == 1 %}
+        <a href="/jobs/{{ job.id }}" class="btn btn-warning">Редактировать</a><br>
+        <a href="/jobs/{{ job.id }}/delete" class="btn btn-danger">Удалить</a><br>
+
         {% endif %}
       </td>
     </tr>

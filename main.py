@@ -56,8 +56,9 @@ def edit_job(job_id):
 
     db_sess = db_session.create_session()
     job = db_sess.query(Jobs).get(job_id)
-    if job.team_leader != current_user.id or current_user.id == 1:
-        return "Доступ запрещен!"
+    if job.team_leader != current_user.id:
+        if current_user.id != 1:
+            return "Доступ запрещен!"
 
     form = EditJobForm(obj=job)
 
@@ -75,6 +76,23 @@ def edit_job(job_id):
         return redirect("/")
 
     return render_template('/jobs/edit.html', title='Редактирование работы', form=form, job_id=job_id)
+
+
+@app.route('/jobs/<int:job_id>/delete')
+@login_required
+def delete_job(job_id):
+
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).get(job_id)
+    print(current_user.id)
+    if current_user.id == 1 or job.team_leader == current_user.id:
+
+        db_sess.query(Jobs).filter(Jobs.id == job_id).delete()
+        db_sess.commit()
+        return redirect("/")
+
+    return "Доступ запрещен!"
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
